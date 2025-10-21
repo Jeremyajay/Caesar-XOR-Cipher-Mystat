@@ -2,7 +2,7 @@
 // CS333 - Jesse Chaney
 // cae-xor.c
 
-// The purpose of this assignment is to implement the Caesar-like and XOR
+// The purpose of this file is to implement the Caesar-like and XOR
 // cipher to encrypt/decrypt any message passed in by the user. 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +16,8 @@
 
 int main(int argc, char *argv[])
 {
-  char *cae_string = NULL;
-  char *xor_string = NULL;
+  char *cae_cipher = NULL;
+  char *xor_cipher = NULL;
   bool encrypt = true; // change this value based on the command line (-e or -d)
 
   // This reads/parses the command line input and will perform the respective
@@ -25,23 +25,23 @@ int main(int argc, char *argv[])
   {
     int opt = 0;
 
-    while ((opt = getopt(argc, argv, OPTIONS) != -1) {
+    while ((opt = getopt(argc, argv, OPTIONS)) != -1) {
       switch (opt) {
 	// encrypt (default)
       case 'e':
-	
+	encrypt = true;
 	break;
 	// decrypt
       case 'd':
-
+	encrypt = false;
 	break;
 	// caeser encryption
       case 'c':
-
+	cae_cipher = optarg;
 	break;
 	// xor encryption
       case 'x':
-
+	xor-cipher = optarg;
 	break;
 	// Help about command line options
       case 'h':
@@ -59,6 +59,9 @@ int main(int argc, char *argv[])
       }
     }
   }
-  
-  return EXIT_SUCCESS;
+   char input[1024];
+   size_t cae_len = strlen(cae_cipher);
+   size_t xor_len = strlen(xor_cipher);
+   
+   return EXIT_SUCCESS;
 }
