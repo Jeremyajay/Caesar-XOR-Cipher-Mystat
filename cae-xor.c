@@ -62,6 +62,9 @@ int main(int argc, char *argv[])
    char input[1024];
    size_t cae_len = strlen(cae_cipher);
    size_t xor_len = strlen(xor_cipher);
+   if (fgets(input, sizeof(input), stdin) != NULL) {
+
+   }
    
    return EXIT_SUCCESS;
 }
