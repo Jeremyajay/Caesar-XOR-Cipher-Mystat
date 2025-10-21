@@ -30,9 +30,16 @@ clean cls:
 	rm -f $(PROGS) *.o *~ \#*
 
 git:
-	if [ ! -d .git ]; then git init; fi
+	if [ ! -d .git ]; then \
+	echo "Initializing new Git repository..."; \
+	git init; \
+	fi
+	@echo "Adding source files to Git..."
 	git add *.[ch] Makefile
+	@echo "Committing changes..."
 	git commit -m "Auto commit on $$(date '+%Y-%m-%d %H:%M:%S')"
+	@echo "Pushing to remote repository..."
+	git push -u origin main
 
 tar:
 	tar cvfa ${LOGNAME}_bin_files.tar.gz *.[ch] Makefile
