@@ -5,9 +5,10 @@
 CC = gcc
 DEBUG = -g
 DEFINES =
-CFLAGS = $(DEBUG) -Wall -Wshadow -Wunreachable-code -Wredundant-decls \
+CFLAGS = $(DEBUG) -Wall -Wextra -Wshadow -Wunreachable-code -Wredundant-decls \
 	-Wmissing-declarations -Wold-style-definition -Wmissing-prototypes \
-	-Wdeclaration-after-statement -Wextra $(DEFINES)
+	-Wdeclaration-after-statement -Wno-return-local-addr -Werror \
+	-Wunsafe-loop-optimizations -Wuninitialized $(DEFINES)
 PROG1 = cae-xor
 PROG2 = mystat
 PROGS = $(PROG1) $(PROG2)

@@ -57,11 +57,19 @@ int main(int argc, char *argv[])
 	break;
 	// Help about command line options
       case 'h':
-
+	printf("Usage: ./cae-xor [options]\n");
+	printf("Options:\n");
+	printf("  -e          Encrypt (default)\n");
+	printf("  -d          Decrypt\n");
+	printf("  -c '<key>'  Caesar cipher key\n");
+	printf("  -x '<key>'  XOR cipher key\n");
+	printf("  -h          Display this help message\n");
+	printf("  -D          Diagnostic output (not implemented)\n");
+	exit(EXIT_SUCCESS);
 	break;
 	// Diagnostics about the process (optional)
       case 'D':
-
+	
 	break;
 	// Handles incorrect/unknown input on command line
       default:
@@ -103,6 +111,7 @@ int main(int argc, char *argv[])
 	 buffer[i] = c;
 	 key_index++;
        }
+       
      bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
      if (bytes_written < 0) {
        perror("write");
