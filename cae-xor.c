@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
    xor_len = strlen(xor_cipher);
 
    // Caesar cipher
+   printf("Now doing the Caesar Cipher...\n");
    while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
        for (ssize_t i = 0; i < bytes_read; i++) {
 	 unsigned char c = buffer[i];
@@ -120,14 +121,15 @@ int main(int argc, char *argv[])
    }
 
    // XOR cipher
+   printf("Now doing the XOR cipher...\n");
    key_index = 0;
    while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
      for (ssize_t i = 0; i < bytes_read; i++) {
-       unsigned char c = buffer[i];
-       key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
-       c = c ^ key_char; // Apply bit shift -> also applies to non-printable characters
-       buffer[i] = c;
-       key_index++;
+       if (xor_len > 0) {
+	 key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
+	 buffer[i] ^= key_char; // Apply bit shift -> also applies to non-printable characters
+	 key_index++;
+       }
      }
 
      bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
@@ -136,6 +138,6 @@ int main(int argc, char *argv[])
        exit(EXIT_FAILURE);
      }
    }
-     
+ 
    return EXIT_SUCCESS;
 }
