@@ -48,7 +48,7 @@ void print_label_int(const char *label, long value) {
 // Output format containing parenthesis for extra information
 void print_label_str_int(const char *label, const char *strVal, const char *parenLabel,
 			 long numVal) {
-  printf("%-*s%s (%s = %ld)\n", LABEL_WIDTH, label, strVal, pareLabel, numVal);
+  printf("%-*s%s (%s = %ld)\n", LABEL_WIDTH, label, strVal, parenLabel, numVal);
 }
 
 // Mode output format helper function
