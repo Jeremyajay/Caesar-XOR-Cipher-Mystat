@@ -5,6 +5,9 @@
 // The purpose of this file is to display the inode meta data
 //for each file given on the command line. 
 
+#include <stdlib.h>
+#include <sys/stat.h>
+
 int main(int argc, char *argv[]) {
 
   return EXIT_SUCCESS;
