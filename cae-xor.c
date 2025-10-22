@@ -94,11 +94,11 @@ int main(int argc, char *argv[])
        for (ssize_t i = 0; i < bytes_read; i++) {
 	 unsigned char c = buffer[i];
 
-	 // Skips non-printable characters like '\n'
+	 // Skips non-printable characters like '\n' -> cipher doesn't apply to these
 	 if (c < PRINTABLE_START || c > PRINTABLE_END)
 	   continue;
 
-	 // Determine shift based on the key
+	 // Determine shift based on the key (ASCII)
 	 key_char = cae_cipher[key_index % cae_len];
 	 shift = key_char - PRINTABLE_START;
 
@@ -124,8 +124,8 @@ int main(int argc, char *argv[])
    while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
      for (ssize_t i = 0; i < bytes_read; i++) {
        unsigned char c = buffer[i];
-       key_char = xor_cipher[key_index % xor_len];
-       c = c ^ key_char;
+       key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
+       c = c ^ key_char; // Apply bit shift -> also applies to non-printable characters
        buffer[i] = c;
        key_index++;
      }
