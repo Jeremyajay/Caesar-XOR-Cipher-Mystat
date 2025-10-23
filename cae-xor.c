@@ -89,9 +89,27 @@ int main(int argc, char *argv[])
    cae_len = strlen(cae_cipher);
    xor_len = strlen(xor_cipher);
 
-   // Caesar cipher
-   printf("Now doing the Caesar Cipher...\n");
-   while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
+   if (xor_len > 0 && strcmp(cae_cipher, " ") == 0) {
+     // XOR cipher
+     key_index = 0;
+     while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
+       for (ssize_t i = 0; i < bytes_read; i++) {
+	 key_char = xor_cipher[key_index % xor_len];
+	 buffer[i] ^= key_char;
+	 key_index++;
+       }
+       bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+       if (bytes_written < 0) {
+	 perror("write");
+	 exit(EXIT_FAILURE);
+       }
+     }
+   }
+
+   else if (cae_len > 0 && xor_len == 0) {
+     // Caesar cipher
+     key_index = 0;
+     while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
        for (ssize_t i = 0; i < bytes_read; i++) {
 	 unsigned char c = buffer[i];
 
@@ -99,7 +117,7 @@ int main(int argc, char *argv[])
 	 if (c < PRINTABLE_START || c > PRINTABLE_END)
 	   continue;
 
-	 // Determine shift based on the key (ASCII)
+         // Determine shift based on the key (ASCII)
 	 key_char = cae_cipher[key_index % cae_len];
 	 shift = key_char - PRINTABLE_START;
 
@@ -110,32 +128,52 @@ int main(int argc, char *argv[])
 	   c = PRINTABLE_START + ((c - PRINTABLE_START - shift + PRINTABLE_RANGE) % PRINTABLE_RANGE);
 	 }
 	 buffer[i] = c;
-	 key_index++;
+	 key_index++;	 
        }
        
-     bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
-     if (bytes_written < 0) {
-       perror("write");
-       exit(EXIT_FAILURE);
-     }
-   }
-
-   // XOR cipher
-   printf("Now doing the XOR cipher...\n");
-   key_index = 0;
-   while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
-     for (ssize_t i = 0; i < bytes_read; i++) {
-       if (xor_len > 0) {
-	 key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
-	 buffer[i] ^= key_char; // Apply bit shift -> also applies to non-printable characters
-	 key_index++;
+       bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+       if (bytes_written < 0) {
+	 perror("write");
+	 exit(EXIT_FAILURE);
        }
      }
+   }
+   
+   else if (cae_len > 0 && xor_len > 0) {
+     // Both ciphers
+     key_index = 0;
+     while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
+       // Caesar first
+       for (ssize_t i = 0; i < bytes_read; i++) {
+	 unsigned char c = buffer[i];
+	 if (c >= PRINTABLE_START && c <+ PRINTABLE_END) {
+	   key_char = cae_cipher[key_index & cae_len];
+	   shift = key_char - PRINTABLE_START;
+	   if (encrypt) {
+	     c = PRINTABLE_START + ((c - PRINTABLE_START + shift) % PRINTABLE_RANGE);
+	   } else {
+	     c = PRINTABLE_START + ((c - PRINTABLE_START - shift + PRINTABLE_RANGE) % PRINTABLE_RANGE);
+	   }
+	   buffer[i] = c;
+	 }
+	 key_index++;
+       }
 
-     bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
-     if (bytes_written < 0) {
-       perror("write");
-       exit(EXIT_FAILURE);
+       // XOR cipher next
+       key_index = 0;
+       for (ssize_t i = 0; i < bytes_read; i++) {
+	 if (xor_len > 0) {
+	   key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
+	   buffer[i] ^= key_char; // Apply bit shift -> also applies to non-printable characters
+	   key_index++;
+	 }
+       }
+
+       bytes_written = write(STDOUT_FILENO, buffer, bytes_read);
+       if (bytes_written < 0) {
+	 perror("write");
+	 exit(EXIT_FAILURE);
+       }
      }
    }
  
