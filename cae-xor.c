@@ -1,4 +1,5 @@
 // Jeremy Cuthbert
+// cuthbert@pdx.edu
 // CS333 - Jesse Chaney
 // cae-xor.c
 
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
       case 'd':
 	encrypt = false;
 	break;
-	// caeser encryption
+	// caesar encryption
       case 'c':
 	cae_cipher = optarg;
 	break;
@@ -141,31 +142,47 @@ int main(int argc, char *argv[])
    
    else if (cae_len > 0 && xor_len > 0) {
      // Both ciphers
-     key_index = 0;
+     ssize_t cae_index = 0;
+     ssize_t xor_index = 0;
      while ((bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0) {
        // Caesar first
-       for (ssize_t i = 0; i < bytes_read; i++) {
-	 unsigned char c = buffer[i];
-	 if (c >= PRINTABLE_START && c <+ PRINTABLE_END) {
-	   key_char = cae_cipher[key_index & cae_len];
-	   shift = key_char - PRINTABLE_START;
-	   if (encrypt) {
+       if (encrypt) {
+	 for (ssize_t i = 0; i < bytes_read; i++) {
+	   unsigned char c = buffer[i];
+	   if (c >= PRINTABLE_START && c <= PRINTABLE_END) {
+	     key_char = cae_cipher[cae_index % cae_len];
+	     shift = key_char - PRINTABLE_START;
 	     c = PRINTABLE_START + ((c - PRINTABLE_START + shift) % PRINTABLE_RANGE);
-	   } else {
-	     c = PRINTABLE_START + ((c - PRINTABLE_START - shift + PRINTABLE_RANGE) % PRINTABLE_RANGE);
+	     buffer[i] = c;
+	     cae_index++;
 	   }
-	   buffer[i] = c;
 	 }
-	 key_index++;
-       }
 
-       // XOR cipher next
-       key_index = 0;
-       for (ssize_t i = 0; i < bytes_read; i++) {
-	 if (xor_len > 0) {
-	   key_char = xor_cipher[key_index % xor_len]; // Determine shift based on the key (hex)
+	 // XOR cipher next
+	 for (ssize_t i = 0; i < bytes_read; i++) {
+	   key_char = xor_cipher[xor_index % xor_len]; // Determine shift based on the key (hex)
 	   buffer[i] ^= key_char; // Apply bit shift -> also applies to non-printable characters
-	   key_index++;
+	   xor_index++;
+	 }
+       }
+       else {
+	 // Decrypt XOR first
+	 for (ssize_t i = 0; i < bytes_read; i++) {
+	   key_char = xor_cipher[xor_index % xor_len];
+	   buffer[i] ^= key_char;
+	   xor_index++;
+	 }
+
+	 // Then decrypt Caesar
+	 for (ssize_t i = 0; i < bytes_read; i++) {
+	   unsigned char c = buffer[i];
+	   if (c >= PRINTABLE_START && c <= PRINTABLE_END) {
+	     key_char = cae_cipher[cae_index % cae_len];
+	     shift = key_char - PRINTABLE_START;
+	     c = PRINTABLE_START + ((c - PRINTABLE_START - shift + PRINTABLE_RANGE) % PRINTABLE_RANGE);
+	     buffer[i] = c;
+	     cae_index++;
+	   }
 	 }
        }
 
