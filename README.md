@@ -19,14 +19,12 @@ Both programs are compiled using the provided Makefile and focus on using system
 
 ## cae-xor
 Description
+- The cae-xor utility performs encryption and decryption using one or both of the following:
+- Caesar cipher: Shifts printable ASCII characters by the values in a key string.
+- XOR cipher: Performs bitwise XOR operations with a repeating key.
+- The program reads from standard input and writes to standard output, making it compatible with Unix pipelines.
 
-The cae-xor utility performs encryption and decryption using one or both of the following:
-
-Caesar cipher: Shifts printable ASCII characters by the values in a key string.
-
-XOR cipher: Performs bitwise XOR operations with a repeating key.
-
-The program reads from standard input and writes to standard output, making it compatible with Unix pipelines.
+---
 
 Command Line Options:
   -e          Encrypt (default)
