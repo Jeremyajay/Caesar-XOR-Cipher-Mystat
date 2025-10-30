@@ -27,12 +27,12 @@ Description
 ---
 
 Command Line Options:
-  -e          Encrypt (default)
-  -d          Decrypt
-  -c <key>    Caesar cipher key
-  -x <key>    XOR cipher key
-  -h          Display help message
-  -D          Diagnostic output (not implemented)
+* -e          Encrypt (default)
+* -d          Decrypt
+* -c <key>    Caesar cipher key
+* -x <key>    XOR cipher key
+* -h          Display help message
+* -D          Diagnostic output (not implemented)
 
 ---
   
